@@ -1,89 +1,22 @@
-import Quantity from "@/components/Buyer/Quantity.jsx";
-import Variant from "@/components/Buyer/Variant.jsx";
+import { useLocation } from "react-router-dom";
 import StarIcon from "@mui/icons-material/Star";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import shopdiLogo from "@/assets/images/shopdi_logo.jpeg";
+import { GET } from "../../../api/GET";
+import { JSONToData } from "@/utils/todo";
 export default function ProductDetail() {
-    const product = {
-        id: 0,
-        name: "Product name with long long long description",
-        image: "",
-        rating: 3.5,
-        description: `✅Thông tin sản phẩm : Giày Jordan Cổ Thấp, Giày Thể Thao Jordan Paris Cổ Thấp Xám Hàng Chuẩn Trung, Đế đi êm chân, Full Bill Box \n
-
-                    - Tăng thêm chiều cao 4cm \n
-
-                    - phối đồ mọi phong cách\n
-
-                    - Đế khâu 2 lớp chuẩ n hàng Trung\n
-
-                    - Size: 36 > 43 dành cho cả nam và nữ\n
-
-                    - Mã sản phẩm: Jordan Paris\n
-
-                    - Xuất xứ : được sản xuất tại nhà máy Quảng Châu\n
-                    James Sneaker cam kết:\n
-
-                    ✅CAM KẾT : HOÀN TIỀN 100% NẾU SẢN PHẨM KHÔNG ĐÚNG MÔ TẢ .\n
-                    ✅HỖ TRỢ ĐỔI SIZE TRONG 3 NGÀY NẾU KHÔNG ĐI VỪA .\n
-                    ✅ĐƯỢC KIỂM TRA HÀNG TRƯỚC KHI THANH TOÁN ( GỌI CHO SHOP THEO HOTLINE NẾU BƯU TA K HỖ TRỢ CHO KIỂM TRA HÀNG )\n
-                    ✅SẢN PHẨM TRƯỚC KHI GIAO CHO KHÁCH HÀNG ĐẦY ĐỦ BILL,BOX, TAG...`,
-        review: 1000,
-        sold: 100,
-        price: 199000,
-        inStock: 100,
-        category: ["Thoi trang nam", 'Quan'],
-        phan_loai:
-            [
-                {
-                    type: "mau sac",
-                    value: [
-                        "xanh",
-                        "do",
-                        "vang",
-                        "tim",
-                        "den",
-                        "hong",
-                        "xam", "nau",
-                        "trang"
-                    ]
-                },
-                {
-                    type: "kich thuoc",
-                    value: [
-                        "S",
-                        "M",
-                        "L"
-                    ]
-                }
-            ],
-        chi_tiet: [
-            {
-                name: "Danh muc",
-                value: "Thoi trang nam> Giay"
-            },
-            {
-                name: "Mau sac",
-                value: "xanh"
-            },
-            {
-                name: "Brand",
-                value: "Jordan"
-            },
-            {
-                name: "khoi luong",
-                value: "1kg"
-            }, {
-                name: "Kich thuoc",
-                value: '33.5 x 22.5 x 12.5 cm'
-            },
-            {
-                name: "chat lieu",
-                value: "Polyester"
-            }
-        ]
-
-    }
+    const location = useLocation();
+    let t = location.pathname.split("/")
+    const id = t[t.length - 1]
+    const [isLoading, setIsLoading] = useState(true)
+    const [product, setProduct] = useState({})
+    useEffect(() => {
+        GET(`products/${id}`).then((data) => {
+            setIsLoading(false)
+            setProduct(data.result)
+            console.log(data.result)
+        })
+    }, [])
     const shop_info = {
         name: "Shopdi",
         link: "https://shopdi.com",
@@ -92,24 +25,12 @@ export default function ProductDetail() {
         "san_pham": "100",
         "tham_gia": " 2 nam truoc"
     }
-    let phan_loai = product.phan_loai.map((i) => {
-        return {
-            type: i.type,
-            value: null
-        }
-    })
+    
     const [quantity, setQuantity] = useState(1);
-    const [variant, setVariant] = useState(phan_loai);
-    const [isBuyNowWithoutAttribute, setIsBuyNowWithoutAttribute] = useState(false);
-    const onChangeVariant = (type, value) => {
-        let tmp = [...variant]
-        tmp.find((i) => i.type === type).value = value
-        setVariant(tmp)
-    }
     const product_subImages = ["link-main-image", "link-image-1", "link-image-2", "link-image-3", "link-image-4", "link-image-5", "link-image-6", "link-image-7", "link-image-8", "link-image-9", "link-image-10"]
     const [subImages, setSubImages] = useState([0, 1, 2, 3, 4])
     const [curImage, setCurImage] = useState(0)
-    return (
+    if(!isLoading)return (
         <div className="pr-10 pl-10 bg-cloudBlue grow">
             <div className="pt-10 flex flex-col gap-y-2">
                 <div className="product-info bg-white flex flex-row gap-x-8 border-2 rounded-md">
@@ -139,45 +60,34 @@ export default function ProductDetail() {
                     </div>
                     <div className="product-description flex flex-col gap-y-4">
                         <div className="text-2xl text-wrap">
-                            <p>{product.name}</p>
+                            <p>{product.productName}</p>
                         </div>
                         <div className="flex flex-row gap-x-5">
                             <div className='border-r-2 pr-4 border-grey'>
                                 {[1, 2, 3, 4, 5].map((i) => i < Math.round(product.rating) ? <StarIcon key={i} style={{ color: "yellow", fontSize: "20px" }} /> : <StarIcon key={i} style={{ color: "grey", fontSize: "20px" }} />)}
                             </div>
                             <div className='border-r-2 pr-4 border-grey'>
-                                {product.review} danh gia
+                                {1000} danh gia
                             </div>
                             <div>
-                                {product.sold} da ban
+                                {1000} da ban
                             </div>
                         </div>
                         <div>
                             <span className='text-4xl'>&#8363; {product.price}</span>
                         </div>
-                        <Variant product={product} onChangeVariant={onChangeVariant} />
-                        <div className='flex flex-row'>
-                            <div className='text-base align-middle text-gray-600 min-w-20 text-left'>So luong</div>
-                            <div className='flex flex-row flex-wrap'>
-                                <Quantity quantity={quantity} setQuantity={setQuantity} />
-                                <div className='ml-4'> Con lai {product.inStock} san pham </div>
+                        
+                        {product.variants.map((variant) => (
+                            <div key={variant.variantDetail}>
+                                <span>{JSONToData(variant.variantDetail)}</span>
+                                <span> : </span>
+                                <span>{variant.quantity}</span>
                             </div>
-                        </div>
+                        ))}
                         
                     </div>
                 </div>
                 <div className="description bg-white flex flex-col gap-x-8 border-2 rounded-md p-4">
-                    <div className="text-2xl">
-                        <pre>Chi tiet san pham</pre>
-                    </div>
-                    <div className="flex flex-col">
-                        {product.chi_tiet.map((item) => (
-                            <div key={item.name}>
-                                <div className='inline-block text-left min-w-40 max-w-40'>{item.name}:</div>
-                                <div className='inline-block'>{item.value}</div>
-                            </div>
-                        ))}
-                    </div>
                     <div className="text-2xl">
                         <pre>Mo ta</pre>
                     </div>

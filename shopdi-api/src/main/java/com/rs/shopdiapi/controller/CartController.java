@@ -29,7 +29,7 @@ public class CartController {
     CartService cartService;
     CartItemService cartItemService;
     UserService userService;
-
+    CartMapper cartMapper;
     @GetMapping
     public ApiResponse<?> getCart() {
         Long userId = userService.getCurrentUser().getId();
@@ -51,8 +51,12 @@ public class CartController {
     @PostMapping("/add-item")
     public ApiResponse<?> addItemToCart(@RequestBody CartItemRequest request) {
         Long userId = userService.getCurrentUser().getId();
+        // return ApiResponse.builder()
+        //         .result(cartItemService.addOrUpdateCartItem(userId, request))
+        //         .build();
+        CartItemResponse response =cartMapper.toCartItemResponse( cartItemService.addOrUpdateCartItem(userId, request));
         return ApiResponse.builder()
-                .result(cartItemService.addOrUpdateCartItem(userId, request))
+                .result(response)
                 .build();
     }
 

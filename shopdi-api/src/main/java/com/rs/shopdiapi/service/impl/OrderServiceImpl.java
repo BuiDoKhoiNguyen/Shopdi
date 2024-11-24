@@ -96,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
                     .product(cartItem.getProduct())
+                    .seller(cartItem.getProduct().getSeller())
                     .variant(cartItem.getVariant())
                     .quantity(cartItem.getQuantity())
                     .price(cartItem.getPrice())

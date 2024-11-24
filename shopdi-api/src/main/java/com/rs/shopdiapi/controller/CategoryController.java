@@ -50,7 +50,12 @@ public class CategoryController {
                 .result(categoryService.updateCategory(category, categoryId))
                 .build();
     }
-
+    @GetMapping("/child/{categoryName}")
+    public ApiResponse<?> getChildCategories(@PathVariable String categoryName) {
+        return ApiResponse.builder()
+                .result(categoryService.getCategoriesByParent(categoryName))
+                .build();
+    }
     @DeleteMapping("/delete/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<?> deleteCategory(@PathVariable Long categoryId) {

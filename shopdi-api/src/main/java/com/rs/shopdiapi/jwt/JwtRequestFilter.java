@@ -32,17 +32,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     JwtUtil jwtUtil;
     CustomUserDetailsService customUserDetailsService;
 
-
-
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException, JwtException {
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException, JwtException {
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
         String jwt = null;
-
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             if (jwtUtil.isTokenInvalidated(jwt)) {
@@ -56,10 +53,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 List<String> roles = jwtUtil.extractRoles(jwt);
+
                 List<GrantedAuthority> authorities =
                         roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
                 System.out.println("JwtRequestFilter: Username = " + username);
                 System.out.println("JwtRequestFilter: Authorities = " + authorities);
+
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, authorities);
                 usernamePasswordAuthenticationToken.setDetails(

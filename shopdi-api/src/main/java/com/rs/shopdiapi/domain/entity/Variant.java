@@ -23,7 +23,7 @@ public class Variant extends BaseEntity<Long> {
 
     @Column(nullable = false, columnDefinition = "int default 0")
     Integer quantity = 0;
-
+    // @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     @JsonIgnore

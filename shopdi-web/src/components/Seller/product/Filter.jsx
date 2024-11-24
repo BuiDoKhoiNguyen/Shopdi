@@ -1,43 +1,44 @@
 import React, { useState } from "react";
-
+import PaginationButton from "@/components/Navigation/Pagination";
 import CATEGORIES from '@/data/categories_data';
 const categories = CATEGORIES.CATEGORIES
 
-export default function Filter({children, products }) {
-    
-        let currentCategory = "Danh muc";
-        let sub_categories = ["May tinh","Dien thoai","linh kien"];
-        return (
-            <div className="bg-white grow">
-                <main className="mx-auto  px-4 sm:px-6 lg:px-8">
+export default function Filter({ children, products }) {
 
-                    {/* cac loai bo loc */}
+    let currentCategory = "Danh muc";
+    let sub_categories = ["May tinh", "Dien thoai", "linh kien"];
+    return (
+        <div className="bg-white grow">
+            <main className="mx-auto  px-4 sm:px-6 lg:px-8">
 
-                    <section aria-labelledby="products-heading" className="pb-24 pt-6">
-                        <h2 id="products-heading" className="sr-only">Products</h2>
+                {/* cac loai bo loc */}
 
-                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4 ">
-                            {/* <!-- Filters --> */}
-                            <form className="hidden lg:block w-72 border-r border-gray-200 max-h-screen">
-                                <FilterSection type={currentCategory} values={sub_categories} />
-                                <FilterSection type="Brand" values={["Apple", "Samsung", "Google", "Sony"]} />
-                                <PriceFilter />
-                                <FilterSection type="Rating" values={["1 sao", "2 sao", "3 sao", "4 sao", "5 sao"]} />
-                            </form>
+                <section aria-labelledby="products-heading" className="pt-6">
+                    <h2 id="products-heading" className="sr-only">Products</h2>
 
-                            {/* <!-- Product grid --> */}
-                            <div className="lg:col-span-3">
-                                {children}
-                            </div>
+                    <div className="flex flex-row w-full">
+                        {/* <!-- Filters --> */}
+                        <form className="hidden lg:block w-1/4 border-r border-gray-200 max-h-screen ">
+                            <FilterSection type={currentCategory} values={sub_categories} />
+                            <FilterSection type="Brand" values={["Apple", "Samsung", "Google", "Sony"]} />
+                            <PriceFilter />
+                            <FilterSection type="Rating" values={["1 sao", "2 sao", "3 sao", "4 sao", "5 sao"]} />
+                        </form>
+
+                        {/* <!-- Product grid --> */}
+                        <div className="w-3/4 p-4">
+                            <div>{children}</div>
                         </div>
-                    </section>
-                </main>
+                    </div>
 
-            </div>
+                </section>
+            </main>
 
-        )
-    
-   
+        </div>
+
+    )
+
+
 }
 function PriceFilter() {
     let [isOpen, setIsOpen] = useState(false);

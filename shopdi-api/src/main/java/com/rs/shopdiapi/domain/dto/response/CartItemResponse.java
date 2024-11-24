@@ -16,6 +16,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItemResponse {
+    Long sellerId;
+    String sellerName;
     Long cartItemId;
     Long productId;
     String productName;

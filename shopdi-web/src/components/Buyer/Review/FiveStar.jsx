@@ -14,7 +14,7 @@ const StarRating = () => {
                 <svg
                     key={index}
                     onClick={() => handleRating(index)}
-                    className={`w-8 h-8 cursor-pointer ${
+                    className={`w-3 h-3 md:w-5 md:h-5 cursor-pointer ${
                         index < rating ? "text-yellow-500" : "text-gray-400"
                     }`}
                     aria-hidden="true"
@@ -28,7 +28,7 @@ const StarRating = () => {
                 </svg>
 
             ))}
-            <p className="pl-2 ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">{rating} Star Rating</p>
+            <p className="pl-2 ms-1 text-[14px] md:text-[16px] font-medium text-gray-500 dark:text-gray-400">{rating} Star Rating</p>
         </div>
 
     );

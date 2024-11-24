@@ -19,6 +19,8 @@ public interface ProductService {
     PageResponse<?> searchProduct(String query, int pageNo, int pageSize);
 
     PageResponse<?> findProductByCategory(String category, int pageNo, int pageSize);
+    PageResponse<?> findProductByParentCategory(String category, int pageNo, int pageSize);
+
 
     PageResponse<?> filterProducts(ProductFilterRequest filterRequest, int pageNo, int pageSize);
 

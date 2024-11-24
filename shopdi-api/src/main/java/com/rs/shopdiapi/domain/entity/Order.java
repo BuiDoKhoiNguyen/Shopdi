@@ -39,7 +39,7 @@ public class Order extends BaseEntity<Long> {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     User user;
-
+    
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     List<OrderItem> orderItems = new ArrayList<>();
 
@@ -56,4 +56,10 @@ public class Order extends BaseEntity<Long> {
     String orderNotes;
 
     LocalDateTime deliveryDate;
+    public List<OrderItem> getOrderItems() {
+        if(orderItems == null) {            
+            orderItems = new ArrayList<>();
+        }
+        return orderItems;
+    }
 }

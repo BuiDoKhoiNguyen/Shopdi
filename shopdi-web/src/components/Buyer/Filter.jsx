@@ -1,13 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import ProductList from "./ProductList.jsx";
 import { useLocation } from "react-router-dom";
 import CATEGORIES from '@/data/categories_data';
+import { GET } from '../../api/GET'
+import { Link } from "react-router-dom";
+import { CategoryContext } from "@/pages/buyer/CategoryContext.js";
 const categories = CATEGORIES.CATEGORIES
 
-export default function Filter({children, products }) {
-    const [isSortOpen, setSortOpen] = useState(false);
+export default function Filter({ children, products, setProducts }) {
     const location = useLocation();
     const currentCategory = decodeURIComponent(location.pathname.split("/")[1]);
+
+    const [loading, setLoading] = useState(true);
+    const [sub_categories, setSubCategories] = useState([])
+    const buildUrl = (name, value, isCategory = false, checked = true) => {
+        // console.log(name, value, isCategory, checked)
+        if (isCategory) {
+            // console.log(`/${value}` + location.search)
+            return `/${value}` + location.search
+        }
+        const params = new URLSearchParams(location.search);
+        // console.log(params)
+        if (params.has(name)) {
+            // console.log(params)
+            params.set(name, encodeURI(value))
+            // console.log(location.pathname + `?${params.toString()}`)
+            return location.pathname + `?${params.toString()}`
+        }
+        if (location.search === '') {
+            return location.pathname + `?${name}=${encodeURI(value)}`
+        } else {
+            return location.pathname + `${location.search}&${name}=${encodeURI(value)}`
+        }
+    }
     const isValidCategory = (category) => {
         for (let i = 0; i < categories.length; i++) {
             if (categories[i].name === category) {
@@ -16,60 +41,45 @@ export default function Filter({children, products }) {
         }
         return false
     }
-    if (isValidCategory(currentCategory)) {
+    useEffect(() => {
+        GET(`categories/child/${currentCategory}`).then((res) => {
+            if (res.code === "OK") {
+                // console.log(res)
+                setSubCategories(res.result.map((item) => item.name))
+                setLoading(false)
+            } else {
+                // console.log(res)
+                setLoading(false)
+            }
+        })
+    }, [])
+    if (!loading) {
         const category = categories.find((category) => category.name === currentCategory);
-        let sub_categories = location.state.sub_categories;
         return (
             <div className="bg-white">
                 <main className="mx-auto max-width-20 px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-12">
-                        <h1 className="text-4xl font-bold tracking-tight text-gray-900">{category.name}</h1>
-                        <div className="flex items-center">
-                            <div className=" inline-block text-left">
-                                <div>
-                                    <button type="button" onClick={() => setSortOpen(!isSortOpen)} className="hs-dropdown-toggle group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900" id="menu-button" aria-expanded="false" aria-haspopup="menu" aria-label="Dropdown">
-                                        Sort<svg className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                            <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div id="sort-menu" role="menu" className={`absolute ${isSortOpen ? 'block' : 'hidden'} right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none`} aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
-                                    <div className="py-1" >
-                                        <a href="#" className="block px-4 py-2 text-sm font-medium text-gray-900" role="menuitem" tabIndex="-1" id="menu-item-0">Most Popular</a>
-                                        <a href="#" className="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabIndex="-1" id="menu-item-1">Best Rating</a>
-                                        <a href="#" className="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabIndex="-1" id="menu-item-2">Newest</a>
-                                        <a href="#" className="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabIndex="-1" id="menu-item-3">Price: Low to High</a>
-                                        <a href="#" className="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabIndex="-1" id="menu-item-4">Price: High to Low</a>
-                                    </div>
-                                </div>
-                            </div>
 
-                        </div>
-                    </div>
 
                     {/* cac loai bo loc */}
 
                     <section aria-labelledby="products-heading" className="pb-24 pt-6">
                         <h2 id="products-heading" className="sr-only">Products</h2>
 
-                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+                        <div className=" min-h-screen">
                             {/* <!-- Filters --> */}
                             <form className="hidden lg:block">
                                 {/* <h3 className="sr-only">Categories</h3>
                                 <ul role="list" className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
                                     {category.sub_categories.map(item => <li key={item}><a href="#">{item}</a></li>)}
                                 </ul> */}
-                                <FilterSection type={currentCategory} values={sub_categories} />
-                                <FilterSection type="Brand" values={["Apple", "Samsung", "Google", "Sony"]} />
+                                <FilterSection location={location} type={currentCategory} values={sub_categories} buildUrl={(value) => { return buildUrl("category", value, true, false) }} />
+                                <FilterSection location={location} type="brand" values={["Apple", "Samsung", "Google", "Sony"]} buildUrl={(value) => { return buildUrl("brand", value, false, false) }} />
                                 <PriceFilter />
-                                <FilterSection type="Rating" values={["1 sao", "2 sao", "3 sao", "4 sao", "5 sao"]} />
+                                <FilterSection location={location} type="rating" values={["1 sao", "2 sao", "3 sao", "4 sao", "5 sao"]} buildUrl={(value) => { return buildUrl("rating", value, false, false) }} />
                             </form>
 
                             {/* <!-- Product grid --> */}
-                            <div className="lg:col-span-3">
-                                {/* <ProductList products={products} /> */}
-                                {children}
-                            </div>
+
                         </div>
                     </section>
                 </main>
@@ -87,7 +97,7 @@ export default function Filter({children, products }) {
     }
 }
 function PriceFilter() {
-    let [isOpen, setIsOpen] = useState(false);
+    let [isOpen, setIsOpen] = useState(true);
     const set = (value) => {
         setIsOpen(!isOpen);
         console.log(isOpen)
@@ -124,8 +134,11 @@ function PriceFilter() {
         </div>
     )
 }
-function FilterSection({ type, values }) {
-    let [isOpen, setIsOpen] = useState(false);
+function FilterSection({ type, values, buildUrl,location }) {
+    const cate = decodeURIComponent(location.pathname.split("/")[1])
+    const params = new URLSearchParams(location.search);
+    console.log(cate)
+    let [isOpen, setIsOpen] = useState(true);
     const set = (value) => {
         setIsOpen(!isOpen);
         console.log(isOpen)
@@ -155,8 +168,12 @@ function FilterSection({ type, values }) {
                     <div className="space-y-4">
                         {values.map((item, index) =>
                             <div key={item} className="flex items-center">
-                                <input id={`${index}`} name={item} value="white" type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                                <label htmlFor={`${index}`} className="ml-3 text-sm text-gray-600">{item}</label>
+                                <Link to={buildUrl(item)}>
+                                    <input id={`${index}`}
+                                        checked={params.get(type) === item || cate === item}
+                                        name={type} value={item} type="radio" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                    <label htmlFor={`${index}`} className="ml-3 text-sm text-gray-600">{item}</label>
+                                </Link>
                             </div>
                         )}
                     </div>

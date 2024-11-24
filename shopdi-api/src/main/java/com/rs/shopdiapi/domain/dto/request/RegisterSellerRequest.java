@@ -28,7 +28,7 @@ public class RegisterSellerRequest {
     @NotBlank(message = "City/Village/Town is required")
     String cityOrTown;
 
-    @Email(message = "Enter a valid email")
+    @Email(message = "Email is invalid")
     String email;
 
     @Pattern(regexp = "(^0[3|5|7|8|9][0-9]{8}$)", message = "Enter valid 10 digit mobile number")

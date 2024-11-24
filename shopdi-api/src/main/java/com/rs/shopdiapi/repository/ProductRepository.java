@@ -17,13 +17,16 @@ import java.util.Set;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
-    @Query("SELECT p FROM Product p JOIN p.category c WHERE c.id = :categoryId")
+    @Query("SELECT p FROM Product p JOIN p.category c WHERE c.id = :categoryId OR c.parentCategory.id = :categoryId")    
     Page<Product> findAllByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    @Query("SELECT p FROM Product p JOIN p.category c WHERE c.parentCategory.id = :categoryId")
+    Page<Product> findAllByParentCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
     Page<Product> findAll(Specification<Product> spec, Pageable pageable);
 
     @Query("SELECT p From Product p where LOWER(p.productName) Like %:query% OR LOWER(p.description) Like %:query% OR LOWER(p.brand) LIKE %:query% OR LOWER(p.category.name) LIKE %:query%")
-    List<Product> searchProduct(@Param("query")String query);
+    List<Product> searchProduct(@Param("query") String query);
 
     Page<Product> findAllBySellerId(Long sellerId, Pageable pageable);
 }

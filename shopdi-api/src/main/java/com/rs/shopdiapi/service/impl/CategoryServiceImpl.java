@@ -136,4 +136,18 @@ public class CategoryServiceImpl implements CategoryService {
         child.setParentCategory(null);
         categoryRepository.save(child);
     }
+    @Override
+    public List<CategoryResponse> getCategoriesByParent(String parent) {
+        var parentCategory = categoryRepository.findByName(parent).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        if(parentCategory.getChildCategories().size() == 0) {
+            parentCategory = parentCategory.getParentCategory();
+        }
+        List<Category> categories = categoryRepository.findAllByParentCategory(parentCategory);
+        return categories.stream()
+                .map(category -> CategoryResponse.builder()
+                        .categoryId(category.getId())
+                        .name(category.getName())
+                        .build())
+                .toList();
+    }
 }
