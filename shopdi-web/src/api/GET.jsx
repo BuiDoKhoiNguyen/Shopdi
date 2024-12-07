@@ -1,5 +1,5 @@
 
-const baseUrl = "http://localhost:8080/";
+const baseUrl = "http://localhost:8080/api/v1/";
 export const GET = async (url) => {
     
     const response = await fetch(baseUrl+url, {

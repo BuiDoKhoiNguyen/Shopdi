@@ -105,7 +105,7 @@ export default function Navigation(props) {
                                         </Popover>
 
                                         {!isAdmin ? (<button
-                                            onClick={() => window.open('http://localhost:5173/seller', '_blank')}
+                                            onClick={() => window.open(`${process.env.PREFIX_URL}/seller`, '_blank')}
                                             className="flex items-center text-[12px] text-sm font-medium text-gray-700 hover:text-gray-800"
                                         >
                                             Become a Seller
