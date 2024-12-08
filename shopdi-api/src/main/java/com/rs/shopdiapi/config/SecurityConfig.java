@@ -59,7 +59,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/auth/verify-email"
+                                "/auth/verify-email","/**"
                         ).permitAll(
                         )
                         .anyRequest()
