@@ -62,8 +62,7 @@ public class SecurityConfig {
                                 "/auth/verify-email","/**"
                         ).permitAll(
                         )
-                        .anyRequest()
-                        .authenticated())
+                        )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

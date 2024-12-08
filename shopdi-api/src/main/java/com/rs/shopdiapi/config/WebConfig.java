@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public ViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("classpath:/static/dist/");
+        resolver.setPrefix("classpath:/static/");
         resolver.setSuffix(".html");
         return resolver;
     }
@@ -39,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/dist/", "classpath:/static/")
+                .addResourceLocations("classpath:/static/")
                 .setCachePeriod(3600)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver() {
@@ -47,16 +47,15 @@ public class WebConfig implements WebMvcConfigurer {
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
                         System.out.println("resourcePath: " + resourcePath);
                         if (resourcePath.equals("/")) {
-                            return new ClassPathResource("static/dist/index.html");
+                            return new ClassPathResource("static/index.html");
                         }
                         Resource resource = location.createRelative(resourcePath);
                         System.out.println("resource: " + resource.getURI());
                         return resource.exists() && resource.isReadable() ? resource
-                                : new ClassPathResource("static/dist/index.html");
+                                : new ClassPathResource("static/index.html");
                     }
                 });
-        registry.addResourceHandler("/dist/**")
-                .addResourceLocations("classpath:/dist/");
+        
     }
 
     // @Bean

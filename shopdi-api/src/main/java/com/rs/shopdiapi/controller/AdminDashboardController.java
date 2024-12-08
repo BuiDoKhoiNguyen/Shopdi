@@ -3,10 +3,11 @@ package com.rs.shopdiapi.controller;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import ch.qos.logback.core.model.Model;
+import org.springframework.ui.Model;
 
 @RestController
 public class AdminDashboardController {
@@ -14,10 +15,12 @@ public class AdminDashboardController {
     // public String index() {
     // return "index";
     // }
+
     @GetMapping("/")
-    public ModelAndView getindex() {
-    return new ModelAndView("index");
-    }
+    public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
+		model.addAttribute("name", name);
+		return "index";
+	}
     // private final ResourceLoader resourceLoader;
 
     // public AdminDashboardController(ResourceLoader resourceLoader) {
